@@ -1,17 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Lucas Clicker</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Rual & Lauca Clicker - Buildings Edition</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    #points { font-size: 32px; margin-bottom: 20px; }
+    button { font-size: 16px; padding: 10px 20px; margin: 5px; }
+    .building { margin: 10px 0; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Lucas Clicker</h1>
-    <p>Clones Created: <span id="count">0</span></p>
-    <button id="clicker">Generate Lucas</button>
-  </div>
 
-  <script src="script.js"></script>
+  <div id="points">Points: 0</div>
+  <button id="clickerBtn">Click me!</button>
+
+  <h2>Buildings</h2>
+  <div id="buildingsContainer"></div>
+
+  <script>
+    let points = 0;
+
+    // Building data
+    const buildings = {
+      lab: { name: "Lab", baseCost: 15, count: 0, pps: 1 },
+      factory: { name: "Factory", baseCost: 100, count: 0, pps: 8 },
+      server: { name: "Server", baseCost: 1100, count: 0, pps: 47 },
+    };
+
+    // Update points display
+    function updatePoints() {
+      document.getElementById("points").textContent = "Points: " + Math.floor(points);
+    }
+
+    // Calculate building cost with scaling
+    function getBuildingCost(building) {
+      return Math.floor(building.baseCost * Math.pow(1.15, building.count));
+    }
+
+    // Buy a building if enough points
+    function buyBuilding(type) {
+      const building = buildings[type];
+      const cost = getBuildingCost(building);
+      if (points >= cost) {
+        points -= cost;
+        building.count++;
+        updatePoints();
+        updateBuildingsUI();
+      } else {
+        alert("Not enough points!");
+      }
+    }
+
+    // Add points per second from buildings
+    function addPointsFromBuildings() {
+      let totalPPS = 0;
+      for (let key in buildings) {
+        totalPPS += buildings[key].pps * buildings[key].count;
+      }
+      points += totalPPS / 10;  // adding 0.1 seconds interval, so divide by 10
+      updatePoints();
+    }
+
+    // Create building buttons and info
+    function updateBuildingsUI() {
+      const container = document.getElementById("buildingsContainer");
+      container.innerHTML = ""; // clear
+
+      for (let key in buildings) {
+        const b = buildings[key];
+        const cost = getBuildingCost(b);
+        const div = document.createElement("div");
+        div.className = "building";
+
+        div.innerHTML = `
+          <strong>${b.name}</strong> | Owned: ${b.count} | Generates: ${b.pps} PPS | Cost: ${cost} points
+          <br>
+          <button onclick="buyBuilding('${key}')">Buy ${b.name}</button>
+        `;
+
+        container.appendChild(div);
+      }
+    }
+
+    // Click button adds points
+    document.getElementById("clickerBtn").addEventListener("click", () => {
+      points++;
+      updatePoints();
+    });
+
+    // Initial UI update
+    updatePoints();
+    updateBuildingsUI();
+
+    // Auto add points every 100ms (0.1 second)
+    setInterval(addPointsFromBuildings, 100);
+
+  </script>
+
 </body>
 </html>
