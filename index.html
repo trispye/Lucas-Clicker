@@ -44,65 +44,101 @@
       margin: 15px 0;
       font-size: 20px;
       text-shadow: 0 0 6px #00FF00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
     }
     .building button {
-         background-color: #003300;
-         color: #00FF00;
-         border: 2px solid #00FF00;
-         padding: 8px 15px;
-         border-radius: 8px;
-         cursor: pointer;
-         font-family: 'Courier New', Courier, monospace;
-         font-weight: bold;
-         transition: background-color 0.3s;
-}
+      background-color: #003300;
+      color: #00FF00;
+      border: 2px solid #00FF00;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+      user-select: none;
+    }
+    .building button:hover:enabled {
+      background-color: #005500;
+      color: #AAFFAA;
+    }
+    .building button:disabled {
+      border-color: #004400;
+      color: #004400;
+      cursor: not-allowed;
+      background-color: #001a00;
+    }
 
-.building button:hover {
-  background-color: #005500;
-  color: #AAFFAA;
-}
+    /* Tooltip styling */
+    .tooltip {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dotted #00FF00;
+    }
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: 125%;
+      transform: translateX(-50%);
+      background: #003300;
+      color: #00FF00;
+      padding: 5px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 0 10px #00FF00;
+      z-index: 100;
+    }
 
+    #sacrificeSection {
+      margin-top: 40px;
+    }
+    #sacrificeButton {
+      background-color: #330000;
+      color: #FF4444;
+      font-weight: bold;
+      padding: 15px 40px;
+      border: 3px solid #FF4444;
+      border-radius: 15px;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #sacrificeButton:hover {
+      background-color: #550000;
+      color: #FF8888;
+    }
+    #sacrificeMessage {
+      margin-top: 15px;
+      font-size: 18px;
+      min-height: 24px;
+    }
+
+    #crisprUnlock {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 40px;
+      user-select: none;
+      text-shadow: 0 0 8px #00FF00;
+    }
+
+    #crisprTree {
+      display: none;
+      margin-top: 30px;
+      text-align: center;
+      color: #FF4444;
+      text-shadow: 0 0 8px #FF4444;
+    }
   </style>
 </head>
 <body>
-
-<div id="buildings">
-  <div class="building" onclick="buyBuilding('cloningVat')">
-    Cloning Vat - 50 clones
-    <span class="tooltip">+0.1 LPS</span>
-  </div>
-  <div class="building" onclick="buyBuilding('cryoFarm')">
-    Cryo Farm - 500 clones
-    <span class="tooltip">+1 LPS</span>
-  </div>
-  <div class="building" onclick="buyBuilding('synthesizer')">
-    Synthesizer - 5000 clones
-    <span class="tooltip">+10 LPS</span>
-  </div>
-  <div class="building" onclick="buyBuilding('lucasForge')">
-    Lucas Forge - 50000 clones
-    <span class="tooltip">+100 LPS</span>
-  </div>
-  <div class="building" onclick="buyBuilding('dimensionalLab')">
-    Dimensional Lab - 500000 clones
-    <span class="tooltip">+1000 LPS</span>
-  </div>
-  <div class="building" onclick="buyBuilding('soulExtractor')">
-    Soul Extractor - 5000000 clones
-    <span class="tooltip">+10000 LPS</span>
-  </div>
-</div>
-
-<div id="sacrificeSection" style="display: none;">
-  <button id="sacrificeButton">SACRIFICE 1,000,000 LUCAS</button>
-  <p id="sacrificeMessage"></p>
-</div>
-
-<div id="crisprTree" style="display: none;">
-  <h2>🧬 CRISPR TREE UNLOCKED</h2>
-  <p>Begin altering the genome... at great cost.</p>
-  <!-- You can add CRISPR upgrades here -->
-</div>
 
   <h1>LUCAS CLICKER</h1>
   <div id="clones">Clones: 0</div>
@@ -111,82 +147,163 @@
   <h2>Buildings</h2>
   <div id="buildingsContainer"></div>
 
+  <div id="sacrificeSection" style="display: none;">
+    <button id="sacrificeButton">SACRIFICE 1,000,000 LUCAS</button>
+    <p id="sacrificeMessage"></p>
+  </div>
+
+  <div id="crisprUnlock" title="Unlock CRISPR upgrades">🔬</div>
+
+  <div id="crisprTree">
+    <h2>🧬 CRISPR TREE UNLOCKED</h2>
+    <p>Begin altering the genome... at great cost.</p>
+    <!-- Future CRISPR upgrades go here -->
+  </div>
+
   <script>
     let clones = 0;
 
+    // Buildings definition matching your initial building list and costs
     const buildings = {
-      lab: { name: "Lab", baseCost: 15, count: 0, pps: 1 },
-      factory: { name: "Factory", baseCost: 100, count: 0, pps: 8 },
-      server: { name: "Server", baseCost: 1100, count: 0, pps: 47 },
+      cloningVat: { name: "Cloning Vat", baseCost: 50, count: 0, pps: 0.1, tooltip: "+0.1 LPS" },
+      cryoFarm: { name: "Cryo Farm", baseCost: 500, count: 0, pps: 1, tooltip: "+1 LPS" },
+      synthesizer: { name: "Synthesizer", baseCost: 5000, count: 0, pps: 10, tooltip: "+10 LPS" },
+      lucasForge: { name: "Lucas Forge", baseCost: 50000, count: 0, pps: 100, tooltip: "+100 LPS" },
+      dimensionalLab: { name: "Dimensional Lab", baseCost: 500000, count: 0, pps: 1000, tooltip: "+1000 LPS" },
+      soulExtractor: { name: "Soul Extractor", baseCost: 5000000, count: 0, pps: 10000, tooltip: "+10000 LPS" },
     };
 
+    // Update the clone count display
     function updateClones() {
       document.getElementById("clones").textContent = "Clones: " + Math.floor(clones);
     }
 
+    // Calculate cost of building, increases exponentially with count
     function getBuildingCost(building) {
       return Math.floor(building.baseCost * Math.pow(1.15, building.count));
     }
 
+    // Attempt to buy a building if enough clones
     function buyBuilding(type) {
       const building = buildings[type];
+      if (!building) {
+        alert("Invalid building: " + type);
+        return;
+      }
       const cost = getBuildingCost(building);
       if (clones >= cost) {
         clones -= cost;
         building.count++;
         updateClones();
         updateBuildingsUI();
+        checkSacrificeUnlock();
       } else {
         alert("Not enough clones!");
       }
     }
 
+    // Add clones from all buildings every tick
     function addClonesFromBuildings() {
       let totalPPS = 0;
-      for (let key in buildings) {
-        totalPPS += buildings[key].pps * buildings[key].count;
+      for (const key in buildings) {
+        const b = buildings[key];
+        totalPPS += b.pps * b.count;
       }
-      clones += totalPPS / 10;
+      clones += totalPPS / 10; // 10 ticks per second
       updateClones();
+      checkSacrificeUnlock();
     }
 
+    // Update buildings UI dynamically
     function updateBuildingsUI() {
       const container = document.getElementById("buildingsContainer");
       container.innerHTML = "";
-      for (let key in buildings) {
+      for (const key in buildings) {
         const b = buildings[key];
         const cost = getBuildingCost(b);
+
+        // Create building div
         const div = document.createElement("div");
         div.className = "building";
-        div.innerHTML = `
-          <strong>${b.name}</strong> | Owned: ${b.count} | Generates: ${b.pps} PPS | Cost: ${cost} clones
-          <br>
-          <button onclick="buyBuilding('${key}')">Buy ${b.name}</button>
-        `;
+
+        // Create building info with tooltip
+        const infoSpan = document.createElement("span");
+        infoSpan.className = "tooltip";
+        infoSpan.textContent = `${b.name} - Owned: ${b.count} | Generates: ${b.pps} LPS | Cost: ${cost} clones`;
+        infoSpan.setAttribute("data-tooltip", b.tooltip);
+
+        // Create buy button
+        const btn = document.createElement("button");
+        btn.textContent = `Buy ${b.name}`;
+        btn.disabled = clones < cost;
+        btn.onclick = () => buyBuilding(key);
+
+        div.appendChild(infoSpan);
+        div.appendChild(btn);
+
         container.appendChild(div);
       }
     }
 
+    // Check if sacrifice section should be shown (unlock at 1,000,000 clones)
+    function checkSacrificeUnlock() {
+      const sacSection = document.getElementById("sacrificeSection");
+      if (clones >= 1_000_000) {
+        sacSection.style.display = "block";
+      }
+    }
+
+    // Sacrifice button handler
+    document.getElementById("sacrificeButton").addEventListener("click", () => {
+      if (clones >= 1_000_000) {
+        clones -= 1_000_000;
+        document.getElementById("sacrificeMessage").textContent = "You sacrificed 1,000,000 clones! (Effect to be implemented)";
+        updateClones();
+        updateBuildingsUI();
+      } else {
+        alert("Not enough clones to sacrifice!");
+      }
+    });
+
+    // Click button increases clones by 1
     document.getElementById("clickerBtn").addEventListener("click", () => {
       clones++;
       updateClones();
+      updateBuildingsUI();
+      checkSacrificeUnlock();
     });
 
+    // Placeholder for CRISPR unlock - will show icon if conditions met
+    const crisprUnlockIcon = document.getElementById("crisprUnlock");
+    const crisprTreeDiv = document.getElementById("crisprTree");
+
+    crisprUnlockIcon.addEventListener("click", () => {
+      crisprTreeDiv.style.display = "block";
+      crisprUnlockIcon.style.display = "none";
+    });
+
+    // Example: show CRISPR unlock icon after 10,000,000 clones
+    function checkCrisprUnlock() {
+      if (clones >= 10_000_000) {
+        crisprUnlockIcon.style.display = "block";
+      }
+    }
+
+    // Update loop
+    function gameTick() {
+      addClonesFromBuildings();
+      checkSacrificeUnlock();
+      checkCrisprUnlock();
+      updateBuildingsUI();
+    }
+
+    // Initial UI setup
     updateClones();
     updateBuildingsUI();
 
-    setInterval(addClonesFromBuildings, 100);
+    // Run game tick 10 times per second
+    setInterval(gameTick, 100);
 
   </script>
-    <!-- Add somewhere near the bottom of your body -->
-<div id="crisprUnlock" style="display: none; position: fixed; bottom: 20px; right: 20px; cursor: pointer;">
-  🔬
-</div>
-
-<div id="crisprTree" style="display: none; margin-top: 30px;">
-  <h2 style="color: red;">CRISPR TREE UNLOCKED</h2>
-  <!-- Placeholder for future CRISPR upgrades -->
-</div>
-
 </body>
 </html>
