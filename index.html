@@ -2,99 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Rual & Lauca Clicker - Buildings Edition</title>
+  <title>Lucas Clicker</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-    #points { font-size: 32px; margin-bottom: 20px; }
-    button { font-size: 16px; padding: 10px 20px; margin: 5px; }
-    .building { margin: 10px 0; }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #000000; /* black background */
+      color: #00FF00;            /* bright green text */
+      text-align: center;
+      margin: 20px;
+    }
+    h1 {
+      font-size: 64px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px #00FF00;
+    }
+    #clones {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #00FF00;
+    }
+    #clickerBtn {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 48px;
+      padding: 40px 80px;
+      background-color: #003300; /* dark green */
+      color: #00FF00;
+      border: 3px solid #00FF00;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 30px auto 60px auto;
+      display: block;
+      box-shadow: 0 0 20px #00FF00;
+      user-select: none;
+    }
+    #clickerBtn:hover {
+      background-color: #005500;
+    }
+    .building {
+      margin: 15px 0;
+      font-size: 20px;
+      text-shadow: 0 0 6px #00FF00;
+    }
+    .building button {
+         background-color: #003300;
+         color: #00FF00;
+         border: 2px solid #00FF00;
+         padding: 8px 15px;
+         border-radius: 8px;
+         cursor: pointer;
+         font-family: 'Courier New', Courier, monospace;
+         font-weight: bold;
+         transition: background-color 0.3s;
+}
+
+.building button:hover {
+  background-color: #005500;
+  color: #AAFFAA;
+}
+
   </style>
 </head>
 <body>
 
-  <div id="points">Points: 0</div>
-  <button id="clickerBtn">Click me!</button>
+  <h1>LUCAS CLICKER</h1>
+  <div id="clones">Clones: 0</div>
+  <button id="clickerBtn">Create Clone</button>
 
   <h2>Buildings</h2>
   <div id="buildingsContainer"></div>
 
   <script>
-    let points = 0;
+    let clones = 0;
 
-    // Building data
     const buildings = {
       lab: { name: "Lab", baseCost: 15, count: 0, pps: 1 },
       factory: { name: "Factory", baseCost: 100, count: 0, pps: 8 },
       server: { name: "Server", baseCost: 1100, count: 0, pps: 47 },
     };
 
-    // Update points display
-    function updatePoints() {
-      document.getElementById("points").textContent = "Points: " + Math.floor(points);
+    function updateClones() {
+      document.getElementById("clones").textContent = "Clones: " + Math.floor(clones);
     }
 
-    // Calculate building cost with scaling
     function getBuildingCost(building) {
       return Math.floor(building.baseCost * Math.pow(1.15, building.count));
     }
 
-    // Buy a building if enough points
     function buyBuilding(type) {
       const building = buildings[type];
       const cost = getBuildingCost(building);
-      if (points >= cost) {
-        points -= cost;
+      if (clones >= cost) {
+        clones -= cost;
         building.count++;
-        updatePoints();
+        updateClones();
         updateBuildingsUI();
       } else {
-        alert("Not enough points!");
+        alert("Not enough clones!");
       }
     }
 
-    // Add points per second from buildings
-    function addPointsFromBuildings() {
+    function addClonesFromBuildings() {
       let totalPPS = 0;
       for (let key in buildings) {
         totalPPS += buildings[key].pps * buildings[key].count;
       }
-      points += totalPPS / 10;  // adding 0.1 seconds interval, so divide by 10
-      updatePoints();
+      clones += totalPPS / 10;
+      updateClones();
     }
 
-    // Create building buttons and info
     function updateBuildingsUI() {
       const container = document.getElementById("buildingsContainer");
-      container.innerHTML = ""; // clear
-
+      container.innerHTML = "";
       for (let key in buildings) {
         const b = buildings[key];
         const cost = getBuildingCost(b);
         const div = document.createElement("div");
         div.className = "building";
-
         div.innerHTML = `
-          <strong>${b.name}</strong> | Owned: ${b.count} | Generates: ${b.pps} PPS | Cost: ${cost} points
+          <strong>${b.name}</strong> | Owned: ${b.count} | Generates: ${b.pps} PPS | Cost: ${cost} clones
           <br>
           <button onclick="buyBuilding('${key}')">Buy ${b.name}</button>
         `;
-
         container.appendChild(div);
       }
     }
 
-    // Click button adds points
     document.getElementById("clickerBtn").addEventListener("click", () => {
-      points++;
-      updatePoints();
+      clones++;
+      updateClones();
     });
 
-    // Initial UI update
-    updatePoints();
+    updateClones();
     updateBuildingsUI();
 
-    // Auto add points every 100ms (0.1 second)
-    setInterval(addPointsFromBuildings, 100);
+    setInterval(addClonesFromBuildings, 100);
 
   </script>
 
