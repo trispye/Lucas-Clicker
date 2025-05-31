@@ -1,37 +1,47 @@
-let count = 0;
-const countDisplay = document.getElementById("count");
-const clicker = document.getElementById("clicker");
-
-clicker.addEventListener("click", () => {
-  count++;
-  countDisplay.textContent = count;
-});
-let lucasCount = 0;
+let clones = 0;
+let totalPPS = 0;
 let sacrificed = false;
+let crisprUnlocked = false;
 
-const lucasDisplay = document.getElementById("lucasCount");
+const cloneDisplay = document.getElementById("count"); // Lucas clones counter
 const clickButton = document.getElementById("clickButton");
 const sacrificeSection = document.getElementById("sacrificeSection");
 const sacrificeButton = document.getElementById("sacrificeButton");
 const sacrificeMessage = document.getElementById("sacrificeMessage");
 const crisprTree = document.getElementById("crisprTree");
+const crisprUnlock = document.getElementById("crisprUnlock");
 
+// Manual click to gain clones
 clickButton.addEventListener("click", () => {
-  lucasCount++;
+  clones++;
   updateDisplay();
 });
 
-function updateDisplay() {
-  lucasDisplay.textContent = `LUCAS Clones: ${lucasCount}`;
+// Passive generation every second
+setInterval(() => {
+  clones += totalPPS;
+  updateDisplay();
+  checkForCrisprUnlock();
+}, 1000);
 
-  if (lucasCount >= 1000000 && !sacrificed) {
+function updateDisplay() {
+  cloneDisplay.textContent = `LUCAS Clones: ${clones}`;
+
+  if (clones >= 1000000 && !sacrificed) {
     sacrificeSection.style.display = "block";
   }
 }
 
+function checkForCrisprUnlock() {
+  if (clones >= 900000 && !crisprUnlocked) {
+    crisprUnlock.style.display = "block";
+    crisprUnlock.title = "He watches. Prove your dedication.";
+  }
+}
+
 sacrificeButton.addEventListener("click", () => {
-  if (lucasCount >= 1000000 && !sacrificed) {
-    lucasCount -= 1000000;
+  if (clones >= 1000000 && !sacrificed) {
+    clones -= 1000000;
     sacrificed = true;
     updateDisplay();
     sacrificeSection.style.display = "none";
@@ -39,26 +49,17 @@ sacrificeButton.addEventListener("click", () => {
     sacrificeMessage.textContent = "You feel their pain echo through the void...";
   }
 });
-  let crisprUnlocked = false;
 
-function checkForCrisprUnlock() {
-  if (clones >= 900000 && !crisprUnlocked) {
-    document.getElementById("crisprUnlock").style.display = "block";
-    document.getElementById("crisprUnlock").title = "He watches. Prove your dedication.";
-  }
-}
-
-document.getElementById("crisprUnlock").onclick = function () {
+crisprUnlock.onclick = function () {
   if (clones >= 1000000 && !crisprUnlocked) {
     let confirmSacrifice = confirm("Are you prepared to sacrifice 1,000,000 clones to unlock the forbidden CRISPR Tree?");
     if (confirmSacrifice) {
       clones = 0;
       crisprUnlocked = true;
-      updateCloneDisplay();
-      document.getElementById("crisprUnlock").style.display = "none";
-      document.getElementById("crisprTree").style.display = "block";
+      updateDisplay();
+      crisprUnlock.style.display = "none";
+      crisprTree.style.display = "block";
       alert("The sacrifice has been accepted. The CRISPR Tree awakens...");
-      // Optional: trigger screen shake or glitch animation
     }
   } else {
     alert("You are not yet worthy.");
@@ -66,16 +67,4 @@ document.getElementById("crisprUnlock").onclick = function () {
 };
 
 updateDisplay(); // Initial call
-  let clones = 0;
-let totalPPS = 0;
 
-function updateCloneDisplay() {
-  countDisplay.textContent = clones;
-}
-
-// Passive clone generation every second
-setInterval(() => {
-  clones += totalPPS;
-  updateCloneDisplay();
-  checkForCrisprUnlock();
-}, 1000);
