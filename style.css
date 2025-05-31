@@ -1,22 +1,32 @@
 body {
   font-family: 'Courier New', Courier, monospace;
-  background-color: #111;
-  color: #0f0;
+  background-color: #000000; /* black background */
+  color: #00FF00;            /* bright green text */
   text-align: center;
-  padding-top: 50px;
+  margin: 20px;
 }
-
+#points {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px #00FF00;
+}
 button {
-  padding: 10px 20px;
-  font-size: 1.2em;
-  margin-top: 20px;
-  background-color: #222;
-  border: 2px solid #0f0;
-  color: #0f0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 18px;
+  padding: 12px 25px;
+  margin: 10px;
+  background-color: #003300; /* dark green */
+  color: #00FF00;
+  border: 2px solid #00FF00;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
-
 button:hover {
-  background-color: #0f0;
-  color: #111;
+  background-color: #005500;
+}
+.building {
+  margin: 15px 0;
+  font-size: 20px;
+  text-shadow: 0 0 6px #00FF00;
 }
