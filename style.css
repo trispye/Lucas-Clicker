@@ -30,3 +30,35 @@ button:hover {
   font-size: 20px;
   text-shadow: 0 0 6px #00FF00;
 }
+.building {
+  background: #111;
+  color: white;
+  border: 2px solid white;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.building:hover {
+  transform: scale(1.05);
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.building:hover .tooltip {
+  visibility: visible;
+}
