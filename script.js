@@ -39,5 +39,30 @@ sacrificeButton.addEventListener("click", () => {
     sacrificeMessage.textContent = "You feel their pain echo through the void...";
   }
 });
+  let crisprUnlocked = false;
+
+function checkForCrisprUnlock() {
+  if (clones >= 900000 && !crisprUnlocked) {
+    document.getElementById("crisprUnlock").style.display = "block";
+    document.getElementById("crisprUnlock").title = "He watches. Prove your dedication.";
+  }
+}
+
+document.getElementById("crisprUnlock").onclick = function () {
+  if (clones >= 1000000 && !crisprUnlocked) {
+    let confirmSacrifice = confirm("Are you prepared to sacrifice 1,000,000 clones to unlock the forbidden CRISPR Tree?");
+    if (confirmSacrifice) {
+      clones = 0;
+      crisprUnlocked = true;
+      updateCloneDisplay();
+      document.getElementById("crisprUnlock").style.display = "none";
+      document.getElementById("crisprTree").style.display = "block";
+      alert("The sacrifice has been accepted. The CRISPR Tree awakens...");
+      // Optional: trigger screen shake or glitch animation
+    }
+  } else {
+    alert("You are not yet worthy.");
+  }
+};
 
 updateDisplay(); // Initial call
