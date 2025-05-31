@@ -66,3 +66,16 @@ document.getElementById("crisprUnlock").onclick = function () {
 };
 
 updateDisplay(); // Initial call
+  let clones = 0;
+let totalPPS = 0;
+
+function updateCloneDisplay() {
+  countDisplay.textContent = clones;
+}
+
+// Passive clone generation every second
+setInterval(() => {
+  clones += totalPPS;
+  updateCloneDisplay();
+  checkForCrisprUnlock();
+}, 1000);
