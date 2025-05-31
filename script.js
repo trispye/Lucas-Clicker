@@ -67,4 +67,32 @@ crisprUnlock.onclick = function () {
 };
 
 updateDisplay(); // Initial call
+const buildings = {
+  cloningVat: { cost: 50, lps: 0.1, count: 0 },
+  cryoFarm: { cost: 500, lps: 1, count: 0 },
+  synthesizer: { cost: 5000, lps: 10, count: 0 },
+  lucasForge: { cost: 50000, lps: 100, count: 0 },
+  dimensionalLab: { cost: 500000, lps: 1000, count: 0 },
+  soulExtractor: { cost: 5000000, lps: 10000, count: 0 },
+};
+
+function buyBuilding(name) {
+  const building = buildings[name];
+  if (clones >= building.cost) {
+    clones -= building.cost;
+    building.count++;
+    totalPPS += building.lps;
+    building.cost = Math.floor(building.cost * 1.15); // Increase price
+    updateCloneDisplay();
+    updateBuildingsUI();
+  }
+}
+
+function updateBuildingsUI() {
+  for (let name in buildings) {
+    const b = buildings[name];
+    const el = document.querySelector(`#${name}`);
+    if (el) el.innerText = `${name} (${b.count}) - ${Math.floor(b.cost)} clones`;
+  }
+}
 
