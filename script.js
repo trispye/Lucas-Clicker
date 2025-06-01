@@ -95,4 +95,8 @@ function updateBuildingsUI() {
     if (el) el.innerText = `${name} (${b.count}) - ${Math.floor(b.cost)} clones`;
   }
 }
+function updateCloneDisplay() {
+  countDisplay.textContent = clones;
+  document.getElementById("ppsDisplay").textContent = `LPS: ${totalPPS.toFixed(1)}`;
+}
 
